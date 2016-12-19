@@ -1,0 +1,8 @@
+Google:
+    Client ID: 930300705643-lph2h3dngnbehq56bonkvcv8c1hq9cm1.apps.googleusercontent.com
+    Client Secret: NxrcNrk9xDLbHsrRg6jutAMN
+
+
+Facebook:
+
+Github:
