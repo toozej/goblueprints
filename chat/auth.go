@@ -1,12 +1,12 @@
 package main
 
 import (
-	"net/http"
-	"strings"
-	"log"
 	"fmt"
 	"github.com/stretchr/gomniauth"
 	"github.com/stretchr/objx"
+	"log"
+	"net/http"
+	"strings"
 )
 
 type authHandler struct {
@@ -14,7 +14,7 @@ type authHandler struct {
 }
 
 func (h *authHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	if _, err := r.Cookie("auth"); err == http.ErrNoCookie {
+	if cookie, err := r.Cookie("auth"); err == http.ErrNoCookie || cookie.Value == "" {
 		// not authenticated
 		w.Header().Set("Location", "/login")
 		w.WriteHeader(http.StatusTemporaryRedirect)
@@ -28,7 +28,7 @@ func (h *authHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 // helper function which wraps the authHandler and passes user onto next handler if they pass authentication
-func MustAuth (handler http.Handler) http.Handler {
+func MustAuth(handler http.Handler) http.Handler {
 	return &authHandler{next: handler}
 }
 
@@ -70,12 +70,13 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		authCookieValue := objx.New(map[string]interface{}{
-			"name": user.Name(),
+			"name":       user.Name(),
+			"avatar_url": user.AvatarURL(),
 		}).MustBase64()
 		http.SetCookie(w, &http.Cookie{
-			Name: "auth",
+			Name:  "auth",
 			Value: authCookieValue,
-			Path: "/"})
+			Path:  "/"})
 
 		w.Header()["Location"] = []string{"/chat"}
 		w.WriteHeader(http.StatusTemporaryRedirect)
@@ -85,4 +86,3 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "Auth action %s not supported", action)
 	}
 }
-

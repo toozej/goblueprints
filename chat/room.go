@@ -2,10 +2,10 @@ package main
 
 import (
 	"github.com/gorilla/websocket"
+	"github.com/stretchr/objx"
+	"goblueprints/trace"
 	"log"
 	"net/http"
-	"mycode/trace"
-	"github.com/stretchr/objx"
 )
 
 type room struct {
@@ -86,9 +86,9 @@ func (r *room) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 	client := &client{
-		socket: socket,
-		send:   make(chan *message, messageBufferSize),
-		room:   r,
+		socket:   socket,
+		send:     make(chan *message, messageBufferSize),
+		room:     r,
 		userData: objx.MustFromBase64(authCookie.Value),
 	}
 	r.join <- client

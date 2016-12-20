@@ -1,15 +1,15 @@
 package main
 
 import (
+	"flag"
 	"html/template"
 	"log"
 	"net/http"
 	"path/filepath"
 	"sync"
-	"flag"
 	// uncomment the following two imports when enabling tracing
 	// "os"
-	// "mycode/trace"
+	//"goblueprints/trace"
 	"github.com/stretchr/gomniauth"
 	"github.com/stretchr/gomniauth/providers/facebook"
 	"github.com/stretchr/gomniauth/providers/github"
@@ -40,7 +40,7 @@ func (t *templateHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	// setup port address for application web server
-	var addr = flag.String("addr", ":8080", "The address of the application")
+	var addr = flag.String("addr", ":3000", "The address of the application")
 	flag.Parse()
 
 	// set up gomniauth
@@ -68,6 +68,16 @@ func main() {
 	http.Handle("/login", &templateHandler{filename: "/login.html"})
 	http.HandleFunc("/auth/", loginHandler)
 	http.Handle("/room", r)
+	http.HandleFunc("/logout", func(w http.ResponseWriter, r *http.Request) {
+		http.SetCookie(w, &http.Cookie{
+			Name:   "auth",
+			Value:  "",
+			Path:   "/",
+			MaxAge: -1,
+		})
+		w.Header()["Location"] = []string{"/chat"}
+		w.WriteHeader(http.StatusTemporaryRedirect)
+	})
 
 	// get the room going
 	go r.run()
