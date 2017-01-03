@@ -26,5 +26,5 @@ _testmain.go
 # project files
 .project
 .idea
-chat/.idea
-trace/.idea
+chat/.idea/
+trace/.idea/
