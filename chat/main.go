@@ -58,14 +58,14 @@ func main() {
 	)
 
 	// create a new room
-	r := newRoom()
+	r := newRoom(UseGravatar)
 
 	// uncomment the following line to enable tracing
 	// r.tracer = trace.New(os.Stdout)
 
 	// setup handles
 	http.Handle("/chat", MustAuth(&templateHandler{filename: "chat.html"}))
-	http.Handle("/login", &templateHandler{filename: "/login.html"})
+	http.Handle("/login", &templateHandler{filename: "login.html"})
 	http.HandleFunc("/auth/", loginHandler)
 	http.Handle("/room", r)
 	http.HandleFunc("/logout", func(w http.ResponseWriter, r *http.Request) {
@@ -78,6 +78,7 @@ func main() {
 		w.Header()["Location"] = []string{"/chat"}
 		w.WriteHeader(http.StatusTemporaryRedirect)
 	})
+	http.Handle("/upload", &templateHandler{filename: "upload.html"})
 
 	// get the room going
 	go r.run()

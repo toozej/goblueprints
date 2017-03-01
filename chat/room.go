@@ -1,11 +1,12 @@
 package main
 
 import (
-	"github.com/gorilla/websocket"
-	"github.com/stretchr/objx"
 	"goblueprints/trace"
 	"log"
 	"net/http"
+
+	"github.com/gorilla/websocket"
+	"github.com/stretchr/objx"
 )
 
 type room struct {
@@ -23,16 +24,20 @@ type room struct {
 
 	// tracer will receive trace information of activity
 	tracer trace.Tracer
+
+	// avatar is how avatar information will be obtained
+	avatar Avatar
 }
 
 // newRoom makes a new room that is ready to go
-func newRoom() *room {
+func newRoom(avatar Avatar) *room {
 	return &room{
 		forward: make(chan *message),
 		join:    make(chan *client),
 		leave:   make(chan *client),
 		clients: make(map[*client]bool),
 		tracer:  trace.Off(),
+		avatar:  avatar,
 	}
 }
 
