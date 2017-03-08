@@ -17,6 +17,12 @@ import (
 	"github.com/stretchr/objx"
 )
 
+// set the active Avatar implementation
+var avatars Avatar = TryAvatars{
+	UseFileSystemAvatar,
+	UseAuthAvatar,
+	UseGravatar}
+
 // templ represents a single template
 type templateHandler struct {
 	once     sync.Once
@@ -58,7 +64,7 @@ func main() {
 	)
 
 	// create a new room
-	r := newRoom(UseFileSystemAvatar)
+	r := newRoom()
 
 	// uncomment the following line to enable tracing
 	// r.tracer = trace.New(os.Stdout)
